@@ -89,13 +89,13 @@ firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
   setupData();
-  // setupScroll();
+  createFooter();
+  
 });
 
-function setupScroll(){
-  $(document).mousemove(function(event){
-    $(".cursor").css({left: event.pageX + "px", top: event.pageY + "px"});
-  })
+function createFooter(){
+  var yearText = $("<div class='copyright'>Copyright &copy; " + new Date().getFullYear() + " Pratham Khurana </div>")
+  $("footer").append(yearText)
 }
 
 function setupData() {
@@ -108,10 +108,10 @@ function setupData() {
   database.ref('projects').once('value').then((snapshot) => {
     var projects = snapshot.val();
     projects.forEach(function (val) {
-      createTitleElement(val["title"], val["img"])
+      createTitleElement(val["link"],  val["title"], val["img"])
     });
 
-    if ($(".projects").children().length % 3 == 0) {
+    if ($(".projects").children().length % 2 != 0) {
       $(".projects").children().last().css("width", "100%");
     }
 
@@ -131,13 +131,21 @@ function setHoverListener() {
   });
 }
 
-function createTitleElement(title, backgroundImage) {
+function createTitleElement(link, title, backgroundImage) {
   var projectTitle = $("<div class='project-title'>" + title + "</div>")
   var holder = $("<div class='project-title-holder'></div>").append(projectTitle)
-  var newProject = $("<span id='project'></span>").append(holder);
+  var newProject = $("<span href='www.google.com' id='project'></span>").append(holder);
   newProject.css("background-image", "url(" + backgroundImage + ")");
   newProject.css("background-repeat", "no-repeat");
   newProject.css("background-size", "cover");
   newProject.css("background-position", "center")
+  newProject.click(function(){
+    var win = window.open(link, '_blank');
+    if (win) {
+        win.focus();
+    } else {
+        alert('Please allow popups for this website');
+    }
+  })
   $(".projects").append(newProject)
 }
